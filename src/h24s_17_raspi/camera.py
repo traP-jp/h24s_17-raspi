@@ -3,6 +3,7 @@ from contextlib import contextmanager
 from typing import Any, Generator
 
 from picamera2 import Picamera2
+from PIL.Image import Image
 
 
 @contextmanager
@@ -20,6 +21,7 @@ def acquire_camera(config: dict | None = None) -> Generator[Picamera2, Any, None
 def capture() -> None:
     with acquire_camera() as camera:
         image = camera.capture_image()
+    assert isinstance(image, Image)
     with io.BytesIO() as out:
         image.save(out, format="JPEG")
         buf = out.getvalue()
