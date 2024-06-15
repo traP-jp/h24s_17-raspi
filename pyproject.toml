@@ -15,6 +15,7 @@ requires-python = ">= 3.11"
 [project.scripts]
 hello = "h24s_17_raspi:hello"
 capture = "h24s_17_raspi.camera:capture"
+loop-shutter = "h24s_17_raspi.loop_shutter:loop_shutter"
 
 [build-system]
 requires = ["setuptools"]
