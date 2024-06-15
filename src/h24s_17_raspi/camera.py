@@ -18,4 +18,5 @@ def acquire_camera(config: dict | None = None) -> Generator[Picamera2, Any, None
 
 def capture() -> None:
     with acquire_camera() as camera:
-        camera.capture_file("demo.jpg")
+        image = camera.capture_image()
+        image.save("demo1.jpg")
