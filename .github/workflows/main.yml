@@ -14,6 +14,11 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
+      # https://github.com/raspberrypi/picamera2/tree/main?tab=readme-ov-file#installation-using-pip
+      - run: |
+          sudo apt install -y \
+            python3-libcamera python3-kms++ \
+            python3-prctl libatlas-base-dev ffmpeg libopenjp2-7
       - run: pip install -r requirements-dev.lock
       - run: ruff check
       - run: mypy -p src
