@@ -1,0 +1,21 @@
+[project]
+name = "h24s-17-raspi"
+version = "0.1.0"
+description = "24春ハッカソン チーム17 raspberrypi"
+dependencies = []
+readme = "README.md"
+requires-python = ">= 3.11"
+
+[project.scripts]
+hello = "h24s_17_raspi:hello"
+
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[tool.rye]
+managed = true
+dev-dependencies = []
+
+[tool.setuptools.packages.find]
+where = ["src"]
