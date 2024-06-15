@@ -35,24 +35,38 @@ def serve_camera(
         _log.debug(f"button value = {value}")
         if value == 0:
             continue
+        _log.debug("capture image")
         image = camera.capture_image()
         assert isinstance(image, Image)
         with io.BytesIO() as b:
             image.save(b, format="jpeg")
             buf = b.getvalue()
+        _log.debug("send image")
         asyncio.run_coroutine_threadsafe(tx.put(buf), loop)
 
 
-async def receive_camera(raspi_token: str, post_url: str, rx: Channel[bytes]) -> None:
+async def post_image(raspi_token: str, post_url: str, image: bytes) -> None:
+    import aiofiles
     import aiohttp
 
     headers = {"Content-Type": "image/jpeg", "X-Raspi-Token": raspi_token}
+    async with (
+        aiohttp.ClientSession() as session,
+        session.post(post_url, headers=headers, data=image) as response,
+        aiofiles.open("out/recv.jpeg", mode="wb") as f,
+    ):
+        _log.info(f"request response: {response.status}")
+        _log.debug("save image to out/recv.jpeg")
+        await f.write(image)
+
+
+async def receive_camera(raspi_token: str, post_url: str, rx: Channel[bytes]) -> None:
     async for image in rx:
-        async with (
-            aiohttp.ClientSession() as session,
-            session.post(post_url, headers=headers, data=image) as response,
-        ):
-            _log.info(f"request response: {response.status}")
+        _log.debug("receive image")
+        try:
+            await post_image(raspi_token, post_url, image)
+        except Exception as e:
+            _log.warn(f"err: {e}")
 
 
 async def client(delay: float = 0.1) -> None:
@@ -68,10 +82,10 @@ async def client(delay: float = 0.1) -> None:
     terminate = Event()
 
     def quit() -> None:
+        _log.info("quit handler")
         terminate.set()
 
     loop.add_signal_handler(signal.SIGINT, quit)
-    loop.add_signal_handler(signal.SIGKILL, quit)
 
     _log.debug("starting raspi client...")
     with (
