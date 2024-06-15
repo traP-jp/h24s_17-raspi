@@ -4,6 +4,8 @@ version = "0.1.0"
 description = "24春ハッカソン チーム17 raspberrypi"
 dependencies = [
     "picamera2>=0.3.18",
+    "aiohttp>=3.9.5",
+    "Pillow>=10.3.0",
 ]
 readme = "README.md"
 requires-python = ">= 3.11"

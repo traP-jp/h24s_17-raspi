@@ -9,8 +9,22 @@
 #   generate-hashes: false
 
 -e file:.
+aiohttp==3.9.5
+    # via h24s-17-raspi
+aiosignal==1.3.1
+    # via aiohttp
+attrs==23.2.0
+    # via aiohttp
 av==12.1.0
     # via picamera2
+frozenlist==1.4.1
+    # via aiohttp
+    # via aiosignal
+idna==3.7
+    # via yarl
+multidict==6.0.5
+    # via aiohttp
+    # via yarl
 numpy==1.26.4
     # via picamera2
     # via pidng
@@ -22,6 +36,7 @@ pidng==4.0.9
 piexif==1.1.3
     # via picamera2
 pillow==10.3.0
+    # via h24s-17-raspi
     # via picamera2
 python-prctl==1.8.1
     # via picamera2
@@ -29,3 +44,5 @@ simplejpeg==1.7.2
     # via picamera2
 v4l2-python3==0.3.4
     # via picamera2
+yarl==1.9.4
+    # via aiohttp
