@@ -17,6 +17,7 @@ hello = "h24s_17_raspi:hello"
 capture = "h24s_17_raspi.camera:capture"
 loop-shutter = "h24s_17_raspi.loop_shutter:loop_shutter"
 watch-button = "h24s_17_raspi.button:run_watch_button"
+client = "h24s_17_raspi.client:run_client"
 
 [build-system]
 requires = ["setuptools"]
