@@ -1,3 +1,4 @@
+import io
 from contextlib import contextmanager
 from typing import Any, Generator
 
@@ -19,4 +20,8 @@ def acquire_camera(config: dict | None = None) -> Generator[Picamera2, Any, None
 def capture() -> None:
     with acquire_camera() as camera:
         image = camera.capture_image()
-        image.save("demo1.jpg")
+    with io.BytesIO() as out:
+        image.save(out, format="JPEG")
+        buf = out.getvalue()
+    with open("demo.jpeg", mode="wb") as f:
+        f.write(buf)
