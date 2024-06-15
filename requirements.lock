@@ -9,3 +9,23 @@
 #   generate-hashes: false
 
 -e file:.
+av==12.1.0
+    # via picamera2
+numpy==1.26.4
+    # via picamera2
+    # via pidng
+    # via simplejpeg
+picamera2==0.3.18
+    # via h24s-17-raspi
+pidng==4.0.9
+    # via picamera2
+piexif==1.1.3
+    # via picamera2
+pillow==10.3.0
+    # via picamera2
+python-prctl==1.8.1
+    # via picamera2
+simplejpeg==1.7.2
+    # via picamera2
+v4l2-python3==0.3.4
+    # via picamera2
