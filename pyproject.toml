@@ -6,6 +6,8 @@ dependencies = [
     "picamera2>=0.3.18",
     "aiohttp>=3.9.5",
     "Pillow>=10.3.0",
+    "aiochannel>=1.2.1",
+    "aiofiles>=23.2.1",
 ]
 readme = "README.md"
 requires-python = ">= 3.11"
