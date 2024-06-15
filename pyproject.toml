@@ -17,10 +17,26 @@ build-backend = "setuptools.build_meta"
 managed = true
 dev-dependencies = [
     "mypy>=1.10.0",
+    "ruff>=0.4.9",
 ]
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.ruff]
+# Set the maximum line length to 79.
+line-length = 120
+
+[tool.ruff.format]
+quote-style = "double"
+
+[tool.ruff.lint]
+# Inherit rules from pycodestyle, pyflakes, flake8-simplify, isort
+select = ["F", "E", "SIM", "I"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true
+split-on-trailing-comma = true
 
 [tool.mypy]
 show_error_context = true
