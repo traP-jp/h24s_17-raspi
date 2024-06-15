@@ -10,7 +10,7 @@ requires-python = ">= 3.11"
 
 [project.scripts]
 hello = "h24s_17_raspi:hello"
-capture = "h24s_17_raspi:capture"
+capture = "h24s_17_raspi.camera:capture"
 
 [build-system]
 requires = ["setuptools"]

@@ -14,3 +14,8 @@ def acquire_camera(config: dict | None = None) -> Generator[Picamera2, Any, None
         yield picam2
     finally:
         picam2.stop()
+
+
+def capture() -> None:
+    with acquire_camera() as camera:
+        camera.capture_file("demo.jpg")
