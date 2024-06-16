@@ -46,7 +46,7 @@ def serve_camera(
         image = camera.capture_image()
         assert isinstance(image, Image)
         with io.BytesIO() as b:
-            image.save(b, format="jpeg")
+            image.save(b, format="png")
             buf = b.getvalue()
         _log.debug("send image")
         asyncio.run_coroutine_threadsafe(image_tx.put(buf), loop)
@@ -57,14 +57,14 @@ async def post_image(raspi_secret: str, post_url: str, image: bytes) -> None:
     import aiofiles
     import aiohttp
 
-    headers = {"Content-Type": "image/jpeg", "X-Raspi-Secret": raspi_secret}
+    headers = {"Content-Type": "image/png", "X-Raspi-Secret": raspi_secret}
     async with (
         aiohttp.ClientSession() as session,
         session.post(post_url, headers=headers, data=image) as response,
-        aiofiles.open("out/recv.jpeg", mode="wb") as f,
+        aiofiles.open("out/recv.png", mode="wb") as f,
     ):
         _log.info(f"request response: {response.status}")
-        _log.debug("save image to out/recv.jpeg")
+        _log.debug("save image to out/recv.png")
         await f.write(image)
 
 
