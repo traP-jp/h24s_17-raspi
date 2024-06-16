@@ -42,7 +42,7 @@ def serve_camera(
         time.sleep(delay)
         if not button_pressed.is_set():
             continue
-        _log.debug("capture image")
+        _log.info("capture image")
         image = camera.capture_image()
         assert isinstance(image, Image)
         with io.BytesIO() as b:
@@ -82,12 +82,7 @@ async def client(delay: float = 0.1) -> None:
     import os
     import signal
 
-    raspi_secret = os.environ.get("RASPI_SECRET", "raspitoken")
-    post_url = os.environ.get("POST_IMAGE_URL", "localhost:1323")
-    button_pin = os.environ.get("BUTTON", "GPIO26")
     loop = asyncio.get_event_loop()
-    image_ch: Channel[bytes] = Channel(10)
-    button_pressed = Event()
     terminate = Event()
 
     def quit() -> None:
@@ -97,6 +92,11 @@ async def client(delay: float = 0.1) -> None:
     loop.add_signal_handler(signal.SIGINT, quit)
 
     _log.debug("starting raspi client...")
+    raspi_secret = os.environ.get("RASPI_SECRET", "raspitoken")
+    post_url = os.environ.get("POST_IMAGE_URL", "localhost:1323")
+    button_pin = os.environ.get("BUTTON", "GPIO26")
+    image_ch: Channel[bytes] = Channel(10)
+    button_pressed = Event()
     with (
         acquire_button(button_pin) as button,
         acquire_camera() as camera,
