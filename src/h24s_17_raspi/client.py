@@ -30,7 +30,7 @@ def serve_button(button: gpiod.Line, button_pressed: Event, terminate: Event, de
         button_pressed.set()
 
 
-def serve_camera_only(
+def serve_camera(
     loop: asyncio.AbstractEventLoop,
     camera: Picamera2,
     image_tx: Channel[bytes],
@@ -51,39 +51,6 @@ def serve_camera_only(
         _log.debug("send image")
         asyncio.run_coroutine_threadsafe(image_tx.put(buf), loop)
         button_pressed.clear()
-
-
-def serve_camera(
-    loop: asyncio.AbstractEventLoop,
-    button: gpiod.Line,
-    camera: Picamera2,
-    tx: Channel[bytes],
-    terminate: Event,
-    delay: float = 0.1,
-) -> None:
-    import io
-    import time
-
-    from PIL.Image import Image
-
-    last_value = button.get_value()
-    while not terminate.is_set():
-        time.sleep(delay)
-        value = button.get_value()
-        if value == last_value:
-            continue
-        last_value = value
-        _log.debug(f"button value = {value}")
-        if value == 0:
-            continue
-        _log.debug("capture image")
-        image = camera.capture_image()
-        assert isinstance(image, Image)
-        with io.BytesIO() as b:
-            image.save(b, format="jpeg")
-            buf = b.getvalue()
-        _log.debug("send image")
-        asyncio.run_coroutine_threadsafe(tx.put(buf), loop)
 
 
 async def post_image(raspi_secret: str, post_url: str, image: bytes) -> None:
@@ -136,9 +103,7 @@ async def client(delay: float = 0.1) -> None:
         concurrent.futures.ThreadPoolExecutor() as pool,
     ):
         sbutton = loop.run_in_executor(pool, serve_button, button, button_pressed, terminate, delay)
-        scamera = loop.run_in_executor(
-            pool, serve_camera_only, loop, camera, image_ch, button_pressed, terminate, delay
-        )
+        scamera = loop.run_in_executor(pool, serve_camera, loop, camera, image_ch, button_pressed, terminate, delay)
         receive = asyncio.create_task(receive_camera(raspi_secret, post_url, image_ch))
         await asyncio.wait([sbutton, scamera, receive], return_when=asyncio.FIRST_COMPLETED)
 
