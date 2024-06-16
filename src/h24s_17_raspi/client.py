@@ -57,7 +57,7 @@ async def post_image(raspi_secret: str, post_url: str, image: bytes) -> None:
     import aiofiles
     import aiohttp
 
-    headers = {"Content-Type": "image/jpeg", "X-Raspi-Token": raspi_secret}
+    headers = {"Content-Type": "image/jpeg", "X-Raspi-Secret": raspi_secret}
     async with (
         aiohttp.ClientSession() as session,
         session.post(post_url, headers=headers, data=image) as response,
@@ -112,5 +112,5 @@ def run_client() -> None:
     import sys
 
     logging.basicConfig(stream=sys.stderr, level=logging.INFO)
-    _log.setLevel(logging.INFO)
+    _log.setLevel(logging.DEBUG)
     asyncio.run(client())
