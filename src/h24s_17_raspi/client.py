@@ -45,11 +45,11 @@ def serve_camera(
         asyncio.run_coroutine_threadsafe(tx.put(buf), loop)
 
 
-async def post_image(raspi_token: str, post_url: str, image: bytes) -> None:
+async def post_image(raspi_secret: str, post_url: str, image: bytes) -> None:
     import aiofiles
     import aiohttp
 
-    headers = {"Content-Type": "image/jpeg", "X-Raspi-Token": raspi_token}
+    headers = {"Content-Type": "image/jpeg", "X-Raspi-Token": raspi_secret}
     async with (
         aiohttp.ClientSession() as session,
         session.post(post_url, headers=headers, data=image) as response,
@@ -60,11 +60,11 @@ async def post_image(raspi_token: str, post_url: str, image: bytes) -> None:
         await f.write(image)
 
 
-async def receive_camera(raspi_token: str, post_url: str, rx: Channel[bytes]) -> None:
+async def receive_camera(raspi_secret: str, post_url: str, rx: Channel[bytes]) -> None:
     async for image in rx:
         _log.debug("receive image")
         try:
-            await post_image(raspi_token, post_url, image)
+            await post_image(raspi_secret, post_url, image)
         except Exception as e:
             _log.warn(f"err: {e}")
 
@@ -74,7 +74,7 @@ async def client(delay: float = 0.1) -> None:
     import os
     import signal
 
-    raspi_token = os.environ.get("RASPI_TOKEN", "raspitoken")
+    raspi_secret = os.environ.get("RASPI_SECRET", "raspitoken")
     post_url = os.environ.get("POST_IMAGE_URL", "localhost:1323")
     button_pin = os.environ.get("BUTTON", "GPIO26")
     loop = asyncio.get_event_loop()
@@ -94,7 +94,7 @@ async def client(delay: float = 0.1) -> None:
         concurrent.futures.ThreadPoolExecutor() as pool,
     ):
         serve = loop.run_in_executor(pool, serve_camera, loop, button, camera, ch, terminate, delay)
-        receive = asyncio.create_task(receive_camera(raspi_token, post_url, ch))
+        receive = asyncio.create_task(receive_camera(raspi_secret, post_url, ch))
         await asyncio.wait([serve, receive], return_when=asyncio.FIRST_COMPLETED)
 
 
